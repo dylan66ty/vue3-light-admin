@@ -18,3 +18,7 @@ pnpm install husky @dylan66ty/commitlint-config -D
 npx husky install 
 ```
 
+## husky commit-msg 不生效
+```shell
+chmod ug+x .husky/commit-msg 
+```
