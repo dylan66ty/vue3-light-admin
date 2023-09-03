@@ -3,5 +3,3 @@
 <template>
   <aside>aside</aside>
 </template>
-
-<style lang="scss"></style>

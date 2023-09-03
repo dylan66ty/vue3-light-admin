@@ -16,7 +16,8 @@
     "tailwindcss",
     "typecheck",
     "typeit",
-    "vnode"
+    "vnode",
+    "backtop"
   ],
   "vue.codeActions.enabled": false
 }

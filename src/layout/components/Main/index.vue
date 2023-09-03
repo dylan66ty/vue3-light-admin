@@ -7,5 +7,3 @@
     </el-backtop>
   </div>
 </template>
-
-<style lang="scss" scoped></style>
