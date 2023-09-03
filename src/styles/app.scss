@@ -1,0 +1,8 @@
+@use './preflight.scss';
+@use './element-plus.scss';
+@use './global.scss';
+
+/* stylelint-disable scss/at-rule-no-unknown */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
