@@ -89,7 +89,7 @@ class HttpRequest {
       HttpRequest.axiosInstance
         .request(config)
         .then((response: any) => {
-          resolve(response)
+          resolve(response.data)
         })
         .catch((error) => {
           reject(error)

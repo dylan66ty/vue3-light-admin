@@ -25,7 +25,6 @@
       "node",
       "vite/client",
       "element-plus/global",
-      "blocks-next/global"
     ],
     "paths": {
       "@/*": [

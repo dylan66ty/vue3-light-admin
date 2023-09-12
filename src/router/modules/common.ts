@@ -1,23 +1,15 @@
+import { HomeFilled } from '@element-plus/icons-vue'
 import type { RouteItem } from '../types'
-import Layout from '@/layout/index.vue'
+import Layout from '@/layout'
 import Login from '@/views/Login/index.vue'
 
 export default [
   {
     path: '/',
-    redirect: '/dashboard'
-  },
-  {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: Layout,
-    children: [
-      {
-        path: '',
-        name: 'DashboardMain',
-        component: () => import('@/views/Dashboard/index.vue')
-      }
-    ]
+    redirect: '/home/dashboard',
+    meta: {
+      hidden: true
+    }
   },
   {
     path: '/login',
@@ -25,8 +17,24 @@ export default [
     component: Login,
     meta: {
       title: '登录',
-      hidden: true,
-      rank: 1
+      hidden: true
     }
+  },
+  {
+    path: '/home',
+    name: 'Dashboard',
+    component: Layout,
+    meta: {
+      title: '首页',
+      icon: () => HomeFilled,
+      rank: 1
+    },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/Dashboard/index.vue')
+      }
+    ]
   }
 ] as RouteItem[]

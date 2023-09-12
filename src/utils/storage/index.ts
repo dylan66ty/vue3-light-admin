@@ -1,13 +1,13 @@
-import { isObject } from '../is'
-
 interface StorageOptions {
   expires?: number
   encode?: boolean
 }
 
-interface StorageData extends StorageOptions {
+interface StorageData {
   data: any
-  __timestamp?: number
+  _timestamp?: number
+  _expires?: number
+  _encode?: boolean
 }
 
 interface StorageMethods {
@@ -22,34 +22,26 @@ interface StorageMethods {
  * 1. 数据可以设置过期时间，超出过期时间获取的数据都为 null
  * 2. 数据可进行base64编码（注意是编码，不是加密！前端本地加密都是徒劳～）
  * options
- *  - express 数据过期时间 默认值 undefined
+ *  - expires 数据过期时间 默认值 0
  *  - encode 是否对存入storage中的数据进行base64编码 默认值 false
  */
 class Storage implements StorageMethods {
-  private encode(data: string, flag) {
-    return flag ? window.btoa(data) : data
+  private encode(data: unknown, flag: boolean) {
+    return flag ? window.btoa(JSON.stringify(data)) : data
   }
-  private decode(data: string, flag) {
-    try {
-      return flag ? JSON.parse(window.atob(data)) : data
-    } catch (error) {
-      return flag ? window.atob(data) : data
-    }
+  private decode(data: unknown, flag: boolean) {
+    return flag ? JSON.parse(window.atob(data as string)) : data
   }
   public getItem(key: string) {
     try {
       const storageData: StorageData = JSON.parse(localStorage.getItem(key))
-      if (!isObject(storageData)) return storageData
-      if (Object.prototype.hasOwnProperty.call(storageData, '__timestamp')) {
+      if (Object.prototype.hasOwnProperty.call(storageData || {}, '_timestamp')) {
         const curTimestamp = new Date().getTime()
-        const { expires = 0, __timestamp = 0 } = storageData
-        if (!expires) {
-          return this.decode(storageData.data, storageData.encode)
-        }
-        if (curTimestamp - __timestamp > expires) {
+        const { _expires = 0, _timestamp = 0 } = storageData
+        if (curTimestamp - _timestamp >= _expires && _expires !== 0) {
           return null
         }
-        return this.decode(storageData.data, storageData.encode)
+        return this.decode(storageData.data, storageData._encode)
       } else {
         return storageData
       }
@@ -60,11 +52,14 @@ class Storage implements StorageMethods {
   }
   public setItem(key, data: unknown, options?: StorageOptions) {
     try {
-      const initOptions: StorageOptions = { expires: 0, ...options }
+      const initOptions = {
+        _expires: options?.expires ?? 0,
+        _encode: options?.encode ?? false
+      }
       const storageData = {
-        ...initOptions,
-        __timestamp: new Date().getTime(),
-        data: this.encode(JSON.stringify(data), options.encode)
+        data: this.encode(data, initOptions._encode),
+        _timestamp: new Date().getTime(),
+        ...initOptions
       }
       localStorage.setItem(key, JSON.stringify(storageData))
     } catch (error) {

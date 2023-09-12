@@ -4,8 +4,13 @@
   font-weight: 700;
 }
 
+
 .el-breadcrumb__inner,
 .el-breadcrumb__inner a {
+  font-weight: 400 !important;
+}
+
+.el-breadcrumb__separator {
   font-weight: 400 !important;
 }
 
@@ -36,4 +41,8 @@
 
 .el-range-separator {
   box-sizing: content-box;
+}
+
+.el-drawer__header  {
+  margin-bottom: 0;
 }

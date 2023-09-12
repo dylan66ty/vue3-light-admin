@@ -3,11 +3,12 @@
   import { Iphone, Lock } from '@element-plus/icons-vue'
   import type { FormInstance } from 'element-plus'
   import { useVerifyCode } from '../hooks/useVerifyCode'
-  import { getForgetRules } from '../utils/rules'
+  import { getRules } from '../utils/rules'
   import Code from '@/assets/svg/code.svg?component'
   import { useUserStore } from '@/store/modules/user'
   import Motion from '@/components/Motion'
   import { formValidatePromisify } from '@/utils/element-plus/enhance'
+  import { extractObjProps } from '@/utils'
 
   const userStore = useUserStore()
   const { isDisabled, text, start, end } = useVerifyCode()
@@ -20,7 +21,7 @@
     passwordAgain: ''
   })
 
-  const rules = getForgetRules(form)
+  const rules = extractObjProps(getRules(form), Object.keys(form.value))
 
   const phoneCodeText = computed(() => {
     return text.value.length > 0 ? `${text.value}秒后重新获取` : '获取验证码'
@@ -34,7 +35,7 @@
     if (!(await formValidatePromisify(formRef))) return
   }
   const back = () => {
-    userStore.switchLogonComponent('Login')
+    userStore.SWITCH_COMPONENT('Login')
   }
 
   onUnmounted(() => {

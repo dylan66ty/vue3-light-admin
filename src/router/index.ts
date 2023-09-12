@@ -1,10 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { Router, RouteRecordRaw } from 'vue-router'
 import type { App } from 'vue'
-import { flatten, ascending } from './utils'
+import { flatten, ascending, setDocTitle } from './utils'
+import type { RouteTo } from './types'
 import NProgress from '@/utils/progress'
+import { isEmptyObject } from '@/utils/is'
+import { useUserStore } from '@/store/modules/user'
+import { useAppStore } from '@/store/modules/app'
+import { useTagsStore } from '@/store/modules/tags'
 
-// const whiteList: string[] = ['/login']
+const WHITE_LIST: string[] = ['/login']
 
 const routes: RouteRecordRaw[] = []
 
@@ -15,7 +20,7 @@ Object.keys(modules).forEach((key) => {
   routes.push(modules[key].default)
 })
 
-const constantRoutes = ascending(flatten(routes))
+export const constantRoutes = ascending(flatten(routes))
 
 export const router: Router = createRouter({
   history: createWebHistory(),
@@ -44,8 +49,32 @@ export const resetRouter = () => {
   })
 }
 
-router.beforeEach(() => {
+const setTags = (to: RouteTo) => {
+  if (!to.meta?.hiddenTag && !to.meta?.hidden) {
+    useTagsStore().addTag({
+      path: to.path,
+      title: to.meta.title
+    })
+  }
+}
+
+const setTitle = (to: RouteTo) => {
+  setDocTitle(useAppStore().name, to.meta.title)
+}
+
+router.beforeEach((to: RouteTo, _from, next) => {
   NProgress.start()
+  setTitle(to)
+  setTags(to)
+  if (!isEmptyObject(useUserStore().userInfo)) {
+    next()
+  } else {
+    if (WHITE_LIST.includes(to.path)) {
+      next()
+    } else {
+      next({ path: '/login' })
+    }
+  }
 })
 
 router.afterEach(() => {

@@ -5,6 +5,34 @@ body,
   height: 100%;
 }
 
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+div:focus {
+  outline: none;
+}
+
+
+/* 灰色模式 */
+.html-gray {
+  filter: grayscale(100%);
+}
+
+/* 色弱模式 */
+.html-weakness {
+  filter: invert(80%);
+}
+
 /* nprogress 适配 element-plus 的主题色 */
 #nprogress {
   & .bar {
